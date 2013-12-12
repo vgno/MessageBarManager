@@ -60,7 +60,6 @@
 
 @property (nonatomic, strong) NSMutableArray *messageBarQueue;
 @property (nonatomic, assign, getter = isMessageVisible) BOOL messageVisible;
-@property (nonatomic, assign) CGFloat messageBarOffset;
 
 + (CGFloat)durationForMessageType:(MessageBarMessageType)messageType;
 
@@ -99,6 +98,7 @@
         _messageBarQueue = [[NSMutableArray alloc] init];        
         _messageVisible = NO;
         _messageBarOffset = [[UIApplication sharedApplication] statusBarFrame].size.height;
+        _showInView = [[UIApplication sharedApplication] keyWindow];
     }
     return self;
 }
@@ -122,15 +122,20 @@
 
 - (void)showMessageWithTitle:(NSString*)title description:(NSString*)description type:(MessageBarMessageType)type duration:(CGFloat)duration callback:(void (^)())callback
 {
+    [self showMessageWithTitle:title description:description type:type duration:duration callback:callback showInView:_showInView];
+}
+
+- (void)showMessageWithTitle:(NSString*)title description:(NSString*)description type:(MessageBarMessageType)type duration:(CGFloat)duration callback:(void (^)())callback showInView:(UIView*)showInView
+{
     MessageView *messageView = [[MessageView alloc] initWithTitle:title description:description type:type];
 
     messageView.callbacks = callback ? [NSArray arrayWithObject:callback] : [NSArray array];
     messageView.hasCallback = callback ? YES : NO;
-    
+
     messageView.duration = duration;
     messageView.hidden = YES;
     
-    [[[UIApplication sharedApplication] keyWindow] insertSubview:messageView atIndex:1];
+    [showInView insertSubview:messageView atIndex:1];
     [self.messageBarQueue addObject:messageView];
     
     if (!self.messageVisible)
@@ -419,7 +424,7 @@ static UIColor *descriptionColor = nil;
     switch (type)
     {
         case MessageBarMessageTypeError:
-            backgroundColor = [UIColor colorWithRed:1.0 green:0.611 blue:0.0 alpha:kMessageBarAlpha]; // orange
+            backgroundColor = [UIColor colorWithRed:0.929412 green:0.121569 blue:0.141176 alpha:kMessageBarAlpha]; // orange
             break;
         case MessageBarMessageTypeSuccess:
             backgroundColor = [UIColor colorWithRed:0.0f green:0.831f blue:0.176f alpha:kMessageBarAlpha]; // green

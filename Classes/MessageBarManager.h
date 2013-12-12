@@ -19,6 +19,16 @@ typedef enum {
 @interface MessageBarManager : NSObject
 
 /**
+ Top offset for message bar. By default it takes status bar height.
+ */
+@property (nonatomic, assign) CGFloat messageBarOffset;
+
+/**
+ View in which message should be displayed
+ */
+@property (nonatomic, weak) UIView *showInView;
+
+/**
  *  Singleton instance through which all presentation is managed.
  *
  *  @return MessageBarManager instance (singleton).
@@ -64,6 +74,18 @@ typedef enum {
  *  @param callback     Callback block to be executed if a message is tapped.
  */
 - (void)showMessageWithTitle:(NSString*)title description:(NSString*)description type:(MessageBarMessageType)type duration:(CGFloat)duration callback:(void (^)())callback;
+
+/**
+ *  Shows a message with the supplied title, description, type (dictates color, stroke and icon), callback block, duration & destination view.
+ *
+ *  @param title        Header text in the message view.
+ *  @param description  Description text in the message view.
+ *  @param type         Type dictates color, stroke and icon shown in the message view.
+ *  @param duration     Default duration is 3 seconds, this can be overridden by supplying an optional duration parameter.
+ *  @param callback     Callback block to be executed if a message is tapped.
+ *  @param showInView   View in which message will be shown.
+ */
+- (void)showMessageWithTitle:(NSString*)title description:(NSString*)description type:(MessageBarMessageType)type duration:(CGFloat)duration callback:(void (^)())callback showInView:(UIView*)showInView;
 
 /**
  *  Hides the topmost message from view and removes all remaining messages in the queue (not animated).
